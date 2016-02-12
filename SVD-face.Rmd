@@ -1,0 +1,38 @@
+---
+title: "SVD Picture Compression"
+author: "Alexander Alexandrov"
+date: "Friday, October 23, 2015"
+output: pdf_document
+---
+
+# SVD Picture Compression
+
+```{r}
+printImage <- function(data) image(t(data)[, nrow(data):1])
+```
+
+```{r}
+load("face.rda")
+printImage(faceData)
+```
+
+\newpage
+
+```{r}
+decomposedFace <- svd(faceData)
+plot(decomposedFace$d^2 / sum(decomposedFace$d^2), ylab = "Variance explained", pch = 19)
+```
+
+\newpage
+
+```{r}
+reduceSVD <- function(s, rank) s$u[, 1:rank] %*% diag(s$d[1:rank]) %*% t(s$v[, 1:rank])
+
+ranks <- c(2, 10)
+
+par(mfrow = c(1, length(ranks) + 1))
+for (rank in ranks) {
+    printImage(reduceSVD(decomposedFace, rank))
+}
+printImage(faceData)
+```
